@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: ./fastapi_service          # Build FastAPI backend image
+    volumes:
+      - ./fastapi_service:/app        # Mount backend source for live dev
+      - ./models:/models              # Shared models dir
+    ports:
+      - "8000:8000"          # publish container 8000 to host 8000
+  streamlit:
+    build: ./streamlit_service        # Build image from local Streamlit Dockerfile
+    volumes:
+      - ./streamlit_service:/app      # Mount app source for live dev
+      - ./images:/images              # Image assets for UI
+      - ./models:/models              # Shared models dir
+    ports:
+      - "8501:8501"                   # Publish Streamlit to host: view at http://localhost:8501
+    depends_on: 
+      - fastapi
