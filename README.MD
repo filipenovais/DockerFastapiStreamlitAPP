@@ -5,11 +5,17 @@ A **minimal, containerized demo** showing how to serve a PyTorch image classific
 
 # ⭐ Key Features
 
-- **Two-service stack:** FastAPI backend for model load + inference; Streamlit frontend for selecting models/images and visualizing predictions.
+- **Two-service stack:** FastAPI backend for model loading + inference; Streamlit frontend for model/image selection and prediction visualization.
 - **Dockerized dev loop:** `docker-compose.yml` builds both services and mounts source directories for live code reloading.
-- **Shared volumes:** `/models` and `/images` mounted into both containers so the UI and API see the same assets.
-- **Example model + assets:** Includes a sample `resnet18.pkl` and example images under `images/` to get you started quickly.
-- **Simple REST API:** `/load_model?model_path=...` and `/infer_model` (image upload, `top_k`) endpoints.
+- **Shared volumes:** `/models` and `/images` are mounted into both containers so the UI and API access the same assets.
+- **Example model & assets:** Includes a sample `resnet18.pkl` and starter images under `images/` to get you going quickly.
+- **Simple REST API:**
+  - `GET /load_model?model_path=...`
+  - `POST /infer_model` (multipart image upload; optional `top_k` param)
+- **Fast, persistent model loads:** After you call `/load_model`, the model remains resident in the FastAPI container and is immediately available for subsequent inference requests—no need to reload each time.
+- **Compare models on the same image:** View per-class predictions from multiple models side‑by‑side in a table.
+- **Download and Load any torchvision model** *(coming soon)*: Pull and serve any available model from `torchvision` in the system for quick testing.
+
 
 # 🚀 Getting Started
 

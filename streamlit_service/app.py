@@ -52,19 +52,20 @@ def load_model(selected_model):
 st.set_page_config(layout="centered", page_title="Image Classifier")
 
 # Tab 1 = end-user classify flow; Tab 2 = quick model listing.
-tab1, tab2 = st.tabs(["🏞️ Image Classifier", "🛠️ Manage Models"])
+tab1, tab2 = st.tabs(["🏞️ Image Classifier", "🛠️ Settings"])
 
 # Track model & image selections across interactions so we don't reload the model unnecessarily when the user re-renders the app.
 if "selected_model" not in st.session_state:
     st.session_state.selected_model = None
     st.session_state.selected_image = None
+    st.session_state.df_combined = pd.DataFrame()
 
 with tab1:
     col_screen, col_controls = st.columns([2, 1])
-    col_screen.header("Image Classification")
+    #col_screen.header("🏞️ Image Classifier")
     
     # Model selection (dropdown). We only call backend load when selection changes.
-    selected_model = col_controls.selectbox("Select Model", models, index=None)
+    selected_model = col_controls.selectbox("Select Model", models)
     if selected_model and selected_model != st.session_state.selected_model:
         st.session_state.selected_model = selected_model
         resp = load_model(selected_model)
@@ -77,33 +78,56 @@ with tab1:
     col_image_text.write(f"Image: **{st.session_state.selected_image}**")
 
     # Image selection radio; uses session_state key to persist.
-    selected_image = col_controls.selectbox("Select Image", images, key="selected_image")
+    selected_image = col_controls.selectbox("Select Image", images)
 
     # Top-k parameter (not currently wired into backend response; backend returns top5).
     top_k = col_controls.number_input("Number of Top Classes", min_value=1, max_value=100, value=5, step=1, format="%d")
 
-    if selected_image:
-        try:
-            image_path = os.path.join(images_dir, selected_image)
-            image = Image.open(image_path)
-            col_screen.image(image)
-        except Exception as e:
-            col_screen.error(f"Could not open image: {e}")
+    if selected_image and selected_image != st.session_state.selected_image:
+        st.session_state.selected_image = selected_image
+        st.session_state.df_combined = pd.DataFrame()
+    try:
+        image_path = os.path.join(images_dir, st.session_state.selected_image)
+        image = Image.open(image_path)
+        col_screen.image(image)
+    except Exception as e:
+        col_screen.error(f"Could not open image: {e}")
 
-        # Button to trigger inference call. Disabled unless a model is selected.
-        if col_controls.button("👾 Run Model 👾", disabled=not bool(selected_model)):
-            result = infer_model(image_path, top_k)  # Fixed port for simplicity
+    # Button to trigger inference call. Disabled unless a model is selected.
+    if col_controls.button("👾 Run Model 👾", disabled=not bool(selected_model)):
+        image_path = os.path.join(images_dir, st.session_state.selected_image) if st.session_state.selected_image else None
+        if image_path is None:
+            col_controls.error("No image selected.")
+        else:
+            result = infer_model(image_path, top_k)
             if "error" in result:
                 col_controls.error(result["error"])
             else:
                 top_classes = result.get("top_classes", [])
                 if top_classes:
                     df = pd.DataFrame(top_classes, columns=["Class", "Score (%)"])
-                    st.write("Results:", df)
+                    df.columns = pd.MultiIndex.from_product([[selected_model], df.columns])
+                    st.session_state.df_combined = pd.concat([st.session_state.df_combined, df], axis=1)
+                    # st.write("Results:", df)
 
+    if not st.session_state.df_combined.empty:
+        df = st.session_state.df_combined.reset_index(drop=True)
+        st.write("Results:", df)
 
     
 with tab2:
-    st.header("Manage Models")
+    #st.header("🛠️ Settings")
+    # --- Add Image to /images (single control) ---
+    uploaded_img = st.file_uploader("➕ Add Image", type=None, key="upload_image")
+
+    if uploaded_img is not None:
+        try:
+            dest_path = os.path.join(images_dir, uploaded_img.name)
+            with open(dest_path, "wb") as out_f:
+                out_f.write(uploaded_img.getbuffer())
+            st.success(f"Saved image: {uploaded_img.name}")
+        except Exception as e:
+            st.error(f"Save failed: {e}")
+
     # Quick diagnostic list of available model file stems.
     st.write("Available:", models)
