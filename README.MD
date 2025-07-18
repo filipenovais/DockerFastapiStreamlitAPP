@@ -81,10 +81,16 @@ In your browser:
 
 # API (Quick Reference)
 
-**Load model**  
-`GET /load_model?model_path=<path-without-ext>` → loads `<path>.pkl` from `/models`.
+#### **GET** Load model  
+`GET /load_model?model_path=<path>` ➤ loads model from specified path.
 
-**Infer model**  
-`POST /infer_model` (multipart form: `file=<image>`, `top_k=<int>`) → returns top classes + scores.
+#### **POST** Infer model  
+`POST /infer_model` (multipart form: `file=<image>`, `top_k=<int>`) ➤ returns top classes + scores.
+
+#### **GET** TorchVision models  
+`GET /torchvision_models` ➤ returns list of available TorchVision models.
+
+#### **GET** Download model  
+`GET /download_model?models_dir=<dir>&model_name=<name>` ➤ downloads specified TorchVision model to models directory.
 
 ---
