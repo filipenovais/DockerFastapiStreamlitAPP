@@ -14,8 +14,8 @@ A **minimal, containerized demo** showing how to serve a PyTorch image classific
   - `POST /infer_model` (multipart image upload; optional `top_k` param)
 - **Fast, persistent model loads:** After you call `/load_model`, the model remains resident in the FastAPI container and is immediately available for subsequent inference requests—no need to reload each time.
 - **Compare models on the same image:** View per-class predictions from multiple models side‑by‑side in a table.
-- **Download and Load any torchvision model** *(coming soon)*: Pull and serve any available model from `torchvision` in the system for quick testing.
-
+- **Download and Load any torchvision model**: Pull and use any available model from `torchvision` in the system for quick testing (deletion is also supported).
+- **Add new images:** Upload images from your system to run through the model.
 
 # 🚀 Getting Started
 

@@ -2,8 +2,6 @@ import io
 from PIL import Image
 import asyncio
 from fastapi import UploadFile
-import pickle
-import os
 
 def decode_to_rgb(data: bytes) -> Image.Image:
     return Image.open(io.BytesIO(data)).convert("RGB")
