@@ -7,7 +7,7 @@ services:
       - ./fastapi_service:/app        # Mount backend source for live dev
       - ./models:/models              # Shared models dir
     ports:
-      - "8000:8000"          # publish container 8000 to host 8000
+      - "8000:8000"                   # publish container 8000 to host 8000
   streamlit:
     build: ./streamlit_service        # Build image from local Streamlit Dockerfile
     volumes:

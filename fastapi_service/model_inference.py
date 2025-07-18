@@ -1,9 +1,8 @@
 from torchvision import transforms
 import torch
 
-
 def infer_model(model, labels, image, top_k=5):
-    """Run top-*k* ImageNet-style prediction on a PIL Image using *model*."""
+    """Get top-*k* ImageNet-style prediction on a PIL Image using *model*."""
     transform = transforms.Compose([
         transforms.Resize(256),              # keep aspect ratio; shorter side -> 256
         transforms.CenterCrop(224),          # crop to 224x224 (what most pretrained models expect)

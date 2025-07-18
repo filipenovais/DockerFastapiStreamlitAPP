@@ -1,11 +1,10 @@
 import os
-import requests
 import streamlit as st
 from PIL import Image
 from pathlib import Path
 import pandas as pd
 from utils import format_model_info, get_existing_models
-
+from api_requests import download_model, load_model, get_torchvision_models, infer_model
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
@@ -13,65 +12,10 @@ from utils import format_model_info, get_existing_models
 # Directory paths - assume container/working-directory paths exist
 IMAGES_DIR = "/images"
 MODELS_DIR = "/models"
-FASTAPI_URL = "http://fastapi:8000"
 
 # Get available files
 images = sorted(os.listdir(IMAGES_DIR)) if os.path.isdir(IMAGES_DIR) else []
 models = [p.stem for p in Path(MODELS_DIR).iterdir() if p.is_file()]
-
-# =============================================================================
-# API HELPER FUNCTIONS
-# =============================================================================
-
-def infer_model(image_path, top_k):
-    """Send an image file for classification; return backend JSON."""
-    try:
-        with open(image_path, "rb") as f:
-            files = {"file": f}
-            response = requests.post(
-                f"{FASTAPI_URL}/infer_model", 
-                files=files, 
-                params={"top_k": top_k}, 
-                timeout=30
-            )
-        return response.json()
-    except Exception as e:
-        return {"error": str(e)}
-
-
-def load_model(models_dir, selected_model):
-    """Request backend to load the chosen model; return backend JSON."""
-    try:
-        response = requests.get(
-            f"{FASTAPI_URL}/load_model", 
-            params={"model_path": f"{models_dir}/{selected_model}"}, 
-            timeout=30
-        )
-        return response.json()
-    except Exception as e:
-        return {"error": str(e)}
-
-
-def get_torchvision_models():
-    """Get available TorchVision models from backend; return backend JSON."""
-    try:
-        response = requests.get(f"{FASTAPI_URL}/torchvision_models", timeout=30)
-        return response.json()
-    except Exception as e:
-        return {"error": str(e)}
-
-
-def download_model(models_dir, model_name):
-    """Download a model from TorchVision; return backend JSON."""
-    try:
-        response = requests.get(
-            f"{FASTAPI_URL}/download_model", 
-            params={"models_dir": models_dir, "model_name": model_name}, 
-            timeout=30
-        )
-        return response.json()
-    except Exception as e:
-        return {"error": str(e)}
 
 # =============================================================================
 # SESSION STATE INITIALIZATION
@@ -304,7 +248,6 @@ def render_stats_button():
 # =============================================================================
 # MAIN APPLICATION
 # =============================================================================
-
 def main():
     """Main application entry point."""
     st.set_page_config(layout="centered", page_title="Image Classifier")

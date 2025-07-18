@@ -5,16 +5,15 @@ from model_manager import MODEL_PARAMS, download_model, load_model
 from model_inference import infer_model
 from utils import uploadfile_to_rgb_image  
 
+# Initialize the FastAPI application
 app = FastAPI()
-
 # Runtime containers for managing model states
 app.state.models_dict = {}  # Cache for loaded models: {model_path: (model, labels)}
 app.state.model = None      # Currently active model object
 app.state.labels = None     # Labels corresponding to the active model
 
-
+"""Endpoint to load or switch to a model by path (without .pkl extension)"""
 @app.get("/load_model")
-# Endpoint to load or switch to a model by path (without .pkl extension)
 def load_model_endpoint(model_path: str, request: Request):
     state = request.app.state
 
@@ -28,9 +27,8 @@ def load_model_endpoint(model_path: str, request: Request):
 
     return {"status": "loaded", "model_path": model_path}
 
-
+"""Endpoint to perform inference on an uploaded image, returning top-k predictions"""
 @app.post("/infer_model")
-# Endpoint to perform inference on an uploaded image, returning top-k predictions
 async def infer_model_endpoint(
     file: UploadFile,
     top_k: int = 5,
@@ -49,15 +47,13 @@ async def infer_model_endpoint(
     )
     return {"top_classes": top_classes}
 
-
+"""Endpoint to download and save a model file to a specified directory"""
 @app.get("/download_model")
-# Endpoint to download and save a model file to a specified directory
 def download_model_endpoint(models_dir: str, model_name: str):
     model_path = download_model(models_dir, model_name)
     return {"status": "downloaded", "model_path": model_path}
 
-
+"""Endpoint to list supported torchvision model parameters"""
 @app.get("/torchvision_models")
-# Endpoint to list supported torchvision model parameters
 def torchvision_models_endpoint():
     return MODEL_PARAMS

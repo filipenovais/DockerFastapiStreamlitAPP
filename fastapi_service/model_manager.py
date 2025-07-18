@@ -128,7 +128,6 @@ MODEL_REGISTRY = {
     "convnext_large": (models.convnext_large, models.ConvNeXt_Large_Weights.IMAGENET1K_V1),
 }
 
-
 def download_model(models_dir:str, model_name: str):
     """Download specified pretrained model + labels and pickle them to *dirpath*."""
     if model_name not in MODEL_REGISTRY:
@@ -150,7 +149,6 @@ def download_model(models_dir:str, model_name: str):
     print(f"Model + Labels saved to {path}")
     return path
 
-
 def load_model(path: str):
     """Load a pickled (model, labels) bundle created by ``save_model``."""
     # Load pickle
@@ -164,8 +162,7 @@ def load_model(path: str):
     print(f"Model + Labels loaded from {path}")
     return model, labels
 
-
 if __name__ == '__main__':
-    # Example usage: download + cache two common ImageNet models.
-    save_model('convnext_tiny')
+    # Example usage: download + save ImageNet model + labels.
+    download_model('convnext_tiny')
 

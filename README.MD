@@ -51,26 +51,32 @@ In your browser:
 
 # 🏗️ Project Structure
 ```text
-├── .gitignore
-├── README.MD
-├── docker-compose.yml
 ├── fastapi_service/
 │   ├── Dockerfile
 │   ├── app.py
 │   ├── model_inference.py
 │   ├── model_manager.py
 │   └── utils.py
+├── streamlit_service/
+│   ├── Dockerfile
+│   ├── app.py
+│   ├── api_requests.py
+│   └── utils.py
 ├── images/
 │   ├── image01.jpg
 │   ├── image02.png
 │   ├── image03.jpg
-│   └── image04.jpg
+│   ├── image04.jpg
+│   └── image05.jpg
 ├── models/
 │   └── resnet18.pkl
+├── docker-compose.yml
+├── README.MD
 ├── screenshot.png
-├── streamlit_service/
-│   ├── Dockerfile
-│   └── app.py
+├── screenshot1.png
+├── screenshot2.png
+└── .gitignore
+
 ```
 
 # API (Quick Reference)
