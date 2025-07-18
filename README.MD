@@ -44,7 +44,8 @@ In your browser:
 3. Select an **image** (from `images/`).
 4. Click **Run Model** to send the image to FastAPI and view top-k class scores.
 
-![screenshot](screenshot.png)
+![screenshot](screenshot1.png)
+![screenshot](screenshot2.png)
 
 
 
