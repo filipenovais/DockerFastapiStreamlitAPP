@@ -1,9 +1,22 @@
+<a id="home"></a>
 # Docker + FastAPI + Streamlit Image Classification
 
-A **minimal, containerized demo** showing how to serve a PyTorch image classification model with a FastAPI backend and a Streamlit web UI frontend. Models and sample images are shared across services via mounted volumes, making it easy to experiment in development.
+A minimal, containerized demo for exploring PyTorch image classification using a FastAPI backend and a Streamlit web interface. Both services launch instantly with a single Docker Compose command. The setup supports easy comparison of classification results and fast experimentation with neural networks on custom images. Shared volumes ensure seamless access to models and data, and users can browse, download, and save from dozens of available TorchVision models.
+
+<a id="table-of-contents"></a>
+## 🏡 Quick Links
 
 
-# ⭐ Key Features
+<div style="column-count: 2; column-gap: 2rem;">
+
+- [⭐ Features](#features)  
+- [🚀 Getting Started](#getting-started)  
+- [🏗️ Project Structure](#project-structure)
+- [📦 API (Quick Reference)](#api-quick-reference)  
+</div>
+
+<a id="features"></a>
+# ⭐ Features <span style="float: right;">[🏡](#home)</span>
 
 - **Two-service stack:** FastAPI backend for model loading + inference; Streamlit frontend for model/image selection and prediction visualization.
 - **Dockerized dev loop:** `docker-compose.yml` builds both services and mounts source directories for live code reloading.
@@ -17,7 +30,8 @@ A **minimal, containerized demo** showing how to serve a PyTorch image classific
 - **Download and Load any torchvision model**: Pull and use any available model from `torchvision` in the system for quick testing (deletion is also supported).
 - **Add new images:** Upload images from your system to run through the model.
 
-# 🚀 Getting Started
+<a id="getting-started"></a>
+# 🚀 Getting Started <span style="float: right;">[🏡](#home)</span>
 
 ## 1. Prerequisites
 - Docker + Docker Compose installed.
@@ -48,8 +62,8 @@ In your browser:
 ![screenshot](screenshot2.png)
 
 
-
-# 🏗️ Project Structure
+<a id="project-structure"></a> 
+# 🏗️ Project Structure <span style="float: right;">[🏡](#home)</span>
 ```text
 ├── fastapi_service/
 │   ├── Dockerfile
@@ -76,10 +90,9 @@ In your browser:
 ├── screenshot1.png
 ├── screenshot2.png
 └── .gitignore
-
 ```
-
-# API (Quick Reference)
+<a id="api-quick-reference"></a>
+# 📦 API (Quick Reference) <span style="float: right;">[🏡](#home)</span>
 
 #### **GET** Load model  
 `GET /load_model?model_path=<path>` ➤ loads model from specified path.
