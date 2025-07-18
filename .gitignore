@@ -1,2 +1,7 @@
 vgg16.pkl
+vit_b_16.pkl
+vgg11.pkl
+mnasnet1_3.pkl
+
+**/__pycache__/
 zzz*

@@ -1,38 +1,63 @@
-# app.py
-from fastapi import FastAPI, UploadFile, Request, HTTPException, Query
 import asyncio
+from fastapi import FastAPI, UploadFile, Request 
 
+from model_manager import MODEL_PARAMS, download_model, load_model
 from model_inference import infer_model
-from model_manager import load_model
-from utils import uploadfile_to_rgb_image
+from utils import uploadfile_to_rgb_image  
 
 app = FastAPI()
 
-# Initialize runtime state containers on the app instance.
-# models_dict caches all loaded models by key (model_path).
-# model / labels hold the "active" model last requested via /load_model.
-app.state.models_dict = {}
-app.state.model = None
-app.state.labels = None
+# Runtime containers for managing model states
+app.state.models_dict = {}  # Cache for loaded models: {model_path: (model, labels)}
+app.state.model = None      # Currently active model object
+app.state.labels = None     # Labels corresponding to the active model
 
 
 @app.get("/load_model")
+# Endpoint to load or switch to a model by path (without .pkl extension)
 def load_model_endpoint(model_path: str, request: Request):
     state = request.app.state
 
     if model_path not in state.models_dict:
+        # Load model from disk and store in cache
         model, labels = load_model(f"{model_path}.pkl")
         state.models_dict[model_path] = (model, labels)
     else:
+        # Retrieve the model and labels from cache
         state.model, state.labels = state.models_dict[model_path]
 
     return {"status": "loaded", "model_path": model_path}
 
 
 @app.post("/infer_model")
-async def infer_model_endpoint(file: UploadFile,  top_k: int = 5, request: Request = None):
+# Endpoint to perform inference on an uploaded image, returning top-k predictions
+async def infer_model_endpoint(
+    file: UploadFile,
+    top_k: int = 5,
+    request: Request = None,
+):
     state = request.app.state
-
+    # Convert the uploaded file into an RGB image array
     image = await uploadfile_to_rgb_image(file)
-    top_classes = await asyncio.to_thread(infer_model, state.model, state.labels, image, top_k)
+    # Run inference in a separate thread to avoid blocking
+    top_classes = await asyncio.to_thread(
+        infer_model,
+        state.model,
+        state.labels,
+        image,
+        top_k,
+    )
     return {"top_classes": top_classes}
+
+
+@app.get("/download_model")
+# Endpoint to download and save a model file to a specified directory
+def download_model_endpoint(models_dir: str, model_name: str):
+    model_path = download_model(models_dir, model_name)
+    return {"status": "downloaded", "model_path": model_path}
+
+
+@app.get("/torchvision_models")
+# Endpoint to list supported torchvision model parameters
+def torchvision_models_endpoint():
+    return MODEL_PARAMS
