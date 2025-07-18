@@ -18,13 +18,12 @@ A minimal, containerized demo for exploring PyTorch image classification using a
 <a id="features"></a>
 # ⭐ Features <span style="float: right;">[🏡](#home)</span>
 
+
 - **Two-service stack:** FastAPI backend for model loading + inference; Streamlit frontend for model/image selection and prediction visualization.
 - **Dockerized dev loop:** `docker-compose.yml` builds both services and mounts source directories for live code reloading.
 - **Shared volumes:** `/models` and `/images` are mounted into both containers so the UI and API access the same assets.
 - **Example model & assets:** Includes a sample `resnet18.pkl` and starter images under `images/` to get you going quickly.
-- **Simple REST API:**
-  - `GET /load_model?model_path=...`
-  - `POST /infer_model` (multipart image upload; optional `top_k` param)
+- **FastAPI-powered backend:** Complete endpoints for model management, image classification, and TorchVision integration with automatic documentation and robust error handling.
 - **Fast, persistent model loads:** After you call `/load_model`, the model remains resident in the FastAPI container and is immediately available for subsequent inference requests—no need to reload each time.
 - **Compare models on the same image:** View per-class predictions from multiple models side‑by‑side in a table.
 - **Download and Load any torchvision model**: Pull and use any available model from `torchvision` in the system for quick testing (deletion is also supported).
