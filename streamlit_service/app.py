@@ -89,7 +89,7 @@ def render_image_classifier_tab():
 
     # Run inference button
     if col_run.button("Run 👾", disabled=not bool(selected_model)):
-        handle_inference_request(col_controls, selected_model, top_k)
+        handle_inference_request(col_controls, selected_model, selected_image, top_k)
 
     # Display results
     if not st.session_state.df_combined.empty:
@@ -97,14 +97,15 @@ def render_image_classifier_tab():
         st.write("Results:", df)
 
 
-def handle_inference_request(col_controls, selected_model, top_k):
+def handle_inference_request(col_controls, selected_model, selected_image, top_k):
     """Handle the inference request and update results."""
-    if not st.session_state.selected_image:
+    if not selected_image:
         col_controls.error("No image selected.")
         return
     
-    image_path = os.path.join(IMAGES_DIR, st.session_state.selected_image)
-    result = infer_model(image_path, top_k)
+    model_path = os.path.join(MODELS_DIR, selected_model)
+    image_path = os.path.join(IMAGES_DIR, selected_image)
+    result = infer_model(model_path, image_path, top_k)
     
     if "error" in result:
         col_controls.error(result["error"])

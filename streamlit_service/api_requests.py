@@ -3,7 +3,7 @@ import requests
 # URL for the FastAPI backend service
 FASTAPI_URL = "http://fastapi:8000"
 
-def infer_model(image_path, top_k):
+def infer_model(model_path, image_path, top_k):
     """Send an image file for classification; return backend JSON."""
     try:
         with open(image_path, "rb") as f:
@@ -11,7 +11,7 @@ def infer_model(image_path, top_k):
             response = requests.post(
                 f"{FASTAPI_URL}/infer_model", 
                 files=files, 
-                params={"top_k": top_k}, 
+                params={"model_path": model_path, "top_k": top_k}, 
                 timeout=30
             )
         return response.json()

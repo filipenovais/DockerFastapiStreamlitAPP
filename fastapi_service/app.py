@@ -9,8 +9,6 @@ from utils import uploadfile_to_rgb_image
 app = FastAPI()
 # Runtime containers for managing model states
 app.state.models_dict = {}  # Cache for loaded models: {model_path: (model, labels)}
-app.state.model = None      # Currently active model object
-app.state.labels = None     # Labels corresponding to the active model
 
 """Endpoint to load or switch to a model by path (without .pkl extension)"""
 @app.get("/load_model")
@@ -31,17 +29,26 @@ def load_model_endpoint(model_path: str, request: Request):
 @app.post("/infer_model")
 async def infer_model_endpoint(
     file: UploadFile,
+    model_path: str,
     top_k: int = 5,
     request: Request = None,
 ):
     state = request.app.state
+
+    # Ensure the requested model is available in cache (lazy‑load if necessary)
+    if model_path not in state.models_dict:
+        model, labels = load_model(f"{model_path}.pkl")
+        state.models_dict[model_path] = (model, labels)
+    else:
+        model, labels = state.models_dict[model_path]
+
     # Convert the uploaded file into an RGB image array
     image = await uploadfile_to_rgb_image(file)
     # Run inference in a separate thread to avoid blocking
     top_classes = await asyncio.to_thread(
         infer_model,
-        state.model,
-        state.labels,
+        model,
+        labels,
         image,
         top_k,
     )
