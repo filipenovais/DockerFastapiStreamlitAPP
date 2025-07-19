@@ -97,7 +97,7 @@ In your browser:
 `GET /load_model?model_path=<path>` ➤ loads model from specified path.
 
 #### **POST** Infer model  
-`POST /infer_model` (multipart form: `file=<image>`, `top_k=<int>`) ➤ returns top classes + scores.
+`POST /infer_model` (multipart form: `file=<image>`, `model_path=<str>`, `top_k=<int>`) ➤ returns top classes + scores.
 
 #### **GET** TorchVision models  
 `GET /torchvision_models` ➤ returns list of available TorchVision models.
